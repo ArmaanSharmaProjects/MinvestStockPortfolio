@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './StockList.css'
+import './StockList.css' //Styles 
+
 
 interface Stock {
   symbol: string;
@@ -8,13 +9,15 @@ interface Stock {
   sector: string;
 }
 
-const API_KEY = 'cplujshr01qn8g1vcf4gcplujshr01qn8g1vcf50';
-const DOW_30_SYMBOLS = ['AAPL', 'AMGN', 'AXP', 'BA', 'CAT', 'CRM', 'CSCO', 'CVX', 'DIS', 'DOW', 'GS', 'HD', 'HON', 'IBM', 'INTC', 'JNJ', 'JPM', 'KO', 'MCD', 'MMM', 'MRK', 'MSFT', 'NKE', 'PG', 'TRV', 'UNH', 'V', 'VZ', 'WBA', 'WMT'];
+const API_KEY = 'cplujshr01qn8g1vcf4gcplujshr01qn8g1vcf50'; //API Key
+const DOW_30_SYMBOLS = ['AAPL', 'AMGN', 'AXP', 'BA', 'CAT', 'CRM', 'CSCO', 'CVX', 'DIS', 'DOW', 'GS', 'HD', 'HON', 'IBM', 'INTC', 'JNJ', 'JPM', 'KO', 'MCD', 'MMM', 'MRK', 'MSFT', 'NKE', 'PG', 'TRV', 'UNH', 'V', 'VZ', 'WBA', 'WMT']; //Dow 30 Symbols
+
 
 const StockList: React.FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [portfolio, setPortfolio] = useState<Stock[]>([]);
 
+  //Immediately fetches Dow 30 Stocks 
   useEffect(() => {
     const fetchStocks = async () => {
       const stocksData: Stock[] = [];
@@ -33,7 +36,7 @@ const StockList: React.FC = () => {
             symbol: symbol,
             name: profileData.name,
             price: quoteData.c,
-            sector: profileData.finnhubIndustry
+            sector: profileData.finnhubIndustry //Using Sectors listed here
           });
         } catch (error) {
           console.error(`Error fetching data for ${symbol}:`, error);
@@ -46,16 +49,20 @@ const StockList: React.FC = () => {
     fetchStocks();
   }, []);
 
+  //When add to portfolio is clicked
   const addToPortfolio = (stock: Stock) => {
     if (!portfolio.some(s => s.symbol === stock.symbol)) {
       setPortfolio([...portfolio, stock]);
     }
   };
 
+  //When remove from portfolio is clicked
   const removeFromPortfolio = (stock: Stock) => {
     setPortfolio(portfolio.filter(s => s.symbol !== stock.symbol));
   };
 
+
+  //Calculates diversity according to the Company Profile 2 Sectors
   const calculateDiversity = () => {
     const totalValue = portfolio.reduce((sum, stock) => sum + stock.price, 0);
     const sectorWeights: { [key: string]: number } = {};
